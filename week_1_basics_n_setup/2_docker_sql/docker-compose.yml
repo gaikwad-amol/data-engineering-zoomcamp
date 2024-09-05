@@ -1,0 +1,40 @@
+services:
+  pgdatabase:
+    container_name: pg-database
+    image: postgres:13
+    environment:
+      POSTGRES_DB: # Setting this variable helps to create the database with the name provided
+      POSTGRES_USER: 
+      POSTGRES_PASSWORD:
+      UID:
+      GID:
+    env_file:
+      - .env
+    volumes:
+      - ./ny_taxi_data:/var/lib/postgresql/data # This is to persist the data in the host machine
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -q -d ny_taxi -U data"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: always
+    user: "${UID}:${GID}" # This takes the UID and GID from the .env file which are taken from host machine and same user is  
+                          # created in the container to avoid permission issues of the mounted volume
+    networks:
+      - pg-network
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@admin.com
+      - PGADMIN_DEFAULT_PASSWORD=root
+    ports:
+      - "8080:80"
+    networks:
+      - pg-network
+networks:
+  pg-network:
+    driver: bridge
+
