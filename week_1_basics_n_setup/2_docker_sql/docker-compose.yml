@@ -1,6 +1,7 @@
 services:
+  
   pgdatabase:
-    container_name: pg-database
+    container_name: pgdatabase
     image: postgres:13
     environment:
       POSTGRES_DB: # Setting this variable helps to create the database with the name provided
@@ -24,6 +25,7 @@ services:
                           # created in the container to avoid permission issues of the mounted volume
     networks:
       - pg-network
+  
   pgadmin:
     container_name: pgadmin
     image: dpage/pgadmin4
@@ -34,6 +36,32 @@ services:
       - "8080:80"
     networks:
       - pg-network
+    depends_on:
+      pgdatabase:
+        condition: service_healthy
+
+  data_ingestion_pipeline:
+    container_name: data_ingestion_pipeline
+    build:
+      context: .
+      args:
+        POSTGRES_USER: ${POSTGRES_USER}
+        POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+        POSTGRES_DB: ${POSTGRES_DB}
+        POSTGRES_HOSTNAME: ${POSTGRES_HOSTNAME}
+        POSTGRES_PORT: ${POSTGRES_PORT}
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8081"
+    env_file:
+      - .env
+    networks:
+      - pg-network
+    depends_on:
+      pgdatabase:
+        condition: service_healthy
+    
+
 networks:
   pg-network:
     driver: bridge

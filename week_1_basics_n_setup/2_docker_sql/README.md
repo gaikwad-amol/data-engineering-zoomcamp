@@ -84,3 +84,6 @@ docker run -t \
 ```
 ## 4. Running Postgres and pgAdmin with Docker-Compose
 check the docker-compose file
+```
+POSTGRES_PASSWORD=data UID=$(id -u) GID=$(id -g) docker-compose up --build
+```
