@@ -51,6 +51,13 @@ services:
         POSTGRES_HOSTNAME: ${POSTGRES_HOSTNAME}
         POSTGRES_PORT: ${POSTGRES_PORT}
       dockerfile: Dockerfile
+    deploy:
+      resources:
+        limits:
+          memory: 1G  # Adjust memory limit as needed
+          cpus: "1"
+        reservations:
+          memory: 1G  # Adjust memory reservation as needed
     ports:
       - "8081:8081"
     env_file:
