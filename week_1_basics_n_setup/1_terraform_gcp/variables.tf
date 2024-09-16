@@ -10,7 +10,7 @@ variable "location" {
 
 variable "bq_dataset_name" {
   description = "Name of the dataset"
-  default     = "raw_trips_data_all"
+  default     = "nytaxi"
 }
 
 variable "gcs_bucket_name" {
